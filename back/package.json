@@ -1,0 +1,23 @@
+{
+  "name": "back",
+  "version": "1.0.0",
+  "type":"module",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js"
+  },
+  "packageManager": "pnpm@10.33.0",
+  "dependencies": {
+    "cors": "2.8.6",
+    "dotenv": "17.4.2",
+    "express": "5.2.1",
+    "nodemon": "3.1.14",
+    "oracledb": "6.10.0"
+  },
+  "devDependencies": {
+    "@types/express": "5.0.6",
+    "ts-node": "10.9.2",
+    "typescript": "6.0.3"
+  }
+}
