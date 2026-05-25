@@ -1,5 +1,8 @@
 import 'dotenv/config';
 import express from 'express';
+import cors from 'cors';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { initPool } from './config/db.js';
 
 import huespedesRouter        from './routes/huespedes.js';
@@ -12,8 +15,11 @@ import reservaServiciosRouter from './routes/reservaServicios.js';
 
 const app  = express();
 const PORT = process.env.PORT ?? 3000;
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, '../../front')));
 
 app.use('/api/huespedes',         huespedesRouter);
 app.use('/api/habitaciones',      habitacionesRouter);

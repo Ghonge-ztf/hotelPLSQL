@@ -6,7 +6,7 @@ const router = Router();
 
 // GET /api/habitaciones
 router.get('/', asyncHandler(async (_req, res) => {
-  const rows = await execCursor(`BEGIN :cur := pkg_habitacion.listar_todas(); END;`);
+  const rows = await execCursor(`BEGIN :cur := pkg_habitacion.listar_disponibles(); END;`);
   res.json(rows);
 }));
 
