@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cliente — Hotel PLSQL</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+<div class="app-layout">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">🏨</div>
+      <h2>Hotel PLSQL</h2>
+      <span class="role-badge">Cliente</span>
+    </div>
+    <nav>
+      <div class="nav-item active" onclick="showSection('habitaciones')"><span class="icon">🛏️</span><span>Habitaciones</span></div>
+      <div class="nav-item" onclick="showSection('reservar')"><span class="icon">📅</span><span>Reservar</span></div>
+      <div class="nav-item" onclick="showSection('misreservas')"><span class="icon">📋</span><span>Mis Reservas</span></div>
+      <div class="nav-item" onclick="showSection('pagar')"><span class="icon">💳</span><span>Pagar</span></div>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="logout-btn" onclick="logout()">🚪 Cerrar sesión</button>
+    </div>
+  </aside>
+
+  <div class="main-content">
+    <div class="topbar">
+      <h1 id="pageTitle">Habitaciones disponibles</h1>
+      <span style="font-size:0.85rem;color:var(--muted)">🧳 Cliente</span>
+    </div>
+    <div class="page-content">
+
+      <!-- HABITACIONES DISPONIBLES -->
+      <div id="sec-habitaciones" class="section active">
+        <div class="card">
+          <div class="card-header"><h2>Habitaciones disponibles</h2></div>
+          <div id="habGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px">
+            <div class="loading">Cargando...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RESERVAR -->
+      <div id="sec-reservar" class="section">
+        <div class="card" style="max-width:560px">
+          <div class="card-header"><h2>Nueva Reserva</h2></div>
+          <p style="font-size:0.85rem;color:var(--muted);margin-bottom:20px">
+            Completa el formulario para reservar una habitación. Si no tienes ID de huésped, regístrate primero.
+          </p>
+
+          <div style="background:var(--bg);border-radius:8px;padding:16px;margin-bottom:20px">
+            <p style="font-weight:600;margin-bottom:12px;font-size:0.9rem">¿Primera vez? Regístrate como huésped</p>
+            <div class="form-grid">
+              <div class="form-group"><label>Nombre</label><input type="text" id="regNombre" /></div>
+              <div class="form-group"><label>Apellido</label><input type="text" id="regApellido" /></div>
+              <div class="form-group"><label>DNI</label><input type="text" id="regDni" /></div>
+              <div class="form-group"><label>Email</label><input type="email" id="regEmail" /></div>
+              <div class="form-group"><label>Teléfono</label><input type="text" id="regTel" /></div>
+            </div>
+            <button class="btn btn-secondary" style="margin-top:12px" onclick="registrarHuesped()">Registrarme</button>
+            <span id="huespedRegistrado" style="margin-left:12px;font-size:0.85rem;color:var(--success)"></span>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group"><label>Mi ID de Huésped</label><input type="number" id="resHuespedId" placeholder="Ej: 1" /></div>
+            <div class="form-group"><label>ID Habitación</label><input type="number" id="resHabId" placeholder="Ver disponibles" /></div>
+            <div class="form-group"><label>Fecha Entrada</label><input type="date" id="resEntradaC" /></div>
+            <div class="form-group"><label>Fecha Salida</label><input type="date" id="resSalidaC" /></div>
+          </div>
+          <div style="margin-top:20px">
+            <button class="btn btn-primary" onclick="crearReserva()">📅 Confirmar Reserva</button>
+          </div>
+          <div id="reservaConfirmada" style="margin-top:16px;display:none" class="card" style="background:#d5f5e3;border:1px solid #27ae60">
+            <p style="color:#1e8449;font-weight:600">✅ Reserva creada exitosamente</p>
+            <p style="font-size:0.85rem;color:var(--muted);margin-top:4px">ID de reserva: <strong id="reservaId"></strong></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- MIS RESERVAS -->
+      <div id="sec-misreservas" class="section">
+        <div class="card">
+          <div class="card-header">
+            <h2>Mis Reservas</h2>
+            <div style="display:flex;gap:8px;align-items:center">
+              <input type="number" id="buscarHuespedId" placeholder="Mi ID de huésped" style="padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:0.88rem;width:180px" />
+              <button class="btn btn-primary btn-sm" onclick="buscarReservas()">Buscar</button>
+            </div>
+          </div>
+          <div class="table-wrap"><table>
+            <thead><tr><th>ID Reserva</th><th>Habitación</th><th>Entrada</th><th>Salida</th><th>Estado</th><th>Acción</th></tr></thead>
+            <tbody id="tablaResCliente"><tr><td colspan="6" class="empty-state"><div class="icon">🔍</div>Ingresa tu ID de huésped para ver tus reservas</td></tr></tbody>
+          </table></div>
+        </div>
+      </div>
+
+      <!-- PAGAR -->
+      <div id="sec-pagar" class="section">
+        <div class="card" style="max-width:480px">
+          <div class="card-header"><h2>Registrar Pago</h2></div>
+          <p style="font-size:0.85rem;color:var(--muted);margin-bottom:20px">
+            Ingresa el ID de tu reserva y selecciona el método de pago para completar tu reserva.
+          </p>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>ID de Reserva</label>
+              <input type="number" id="pagoResId" placeholder="Ej: 5" />
+            </div>
+            <div class="form-group">
+              <label>Método de Pago</label>
+              <select id="pagoMetodo">
+                <option value="EFECTIVO">💵 Efectivo</option>
+                <option value="TARJETA">💳 Tarjeta</option>
+                <option value="TRANSFERENCIA">🏦 Transferencia</option>
+              </select>
+            </div>
+          </div>
+          <div style="margin-top:20px">
+            <button class="btn btn-success" onclick="realizarPago()">💳 Pagar ahora</button>
+          </div>
+          <div id="pagoConfirmado" style="margin-top:16px;display:none;padding:16px;background:#d5f5e3;border-radius:8px;border:1px solid #27ae60">
+            <p style="color:#1e8449;font-weight:600">✅ Pago registrado correctamente</p>
+            <p style="font-size:0.85rem;color:var(--muted);margin-top:4px">Tu reserva ha sido confirmada. ¡Gracias por elegirnos!</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div id="toastContainer" class="toast-container"></div>
+<script src="js/api.js"></script>
+<script>
+  if (sessionStorage.getItem('role') !== 'cliente') window.location.href = 'login.html';
+  function logout() { sessionStorage.clear(); window.location.href = 'login.html'; }
+
+  const titles = { habitaciones: 'Habitaciones disponibles', reservar: 'Nueva Reserva', misreservas: 'Mis Reservas', pagar: 'Registrar Pago' };
+  function showSection(name) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById(`sec-${name}`).classList.add('active');
+    document.querySelector(`[onclick="showSection('${name}')"]`).classList.add('active');
+    document.getElementById('pageTitle').textContent = titles[name];
+    if (name === 'habitaciones') loadHabDisponibles();
+  }
+
+  // ── HABITACIONES DISPONIBLES ──
+  async function loadHabDisponibles() {
+    const grid = document.getElementById('habGrid');
+    grid.innerHTML = '<div class="loading">Cargando...</div>';
+    try {
+      const rows = await Habitaciones.getDisponibles();
+      if (!rows.length) { grid.innerHTML = '<div class="empty-state"><div class="icon">🛏️</div>No hay habitaciones disponibles</div>'; return; }
+      grid.innerHTML = rows.map(h => `
+        <div style="background:white;border-radius:10px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.06);border:1px solid var(--border)">
+          <div style="font-size:2rem;margin-bottom:8px">🛏️</div>
+          <div style="font-weight:700;font-size:1.1rem;color:var(--primary)">Hab. #${h.NUMERO_HABITACION || h.numero_habitacion}</div>
+          <div style="font-size:0.82rem;color:var(--muted);margin:4px 0">Piso ${h.PISO || h.piso} · ID: ${h.ID_HABITACION || h.id_habitacion}</div>
+          <div style="margin-top:8px">${badgeEstado('DISPONIBLE')}</div>
+          <button class="btn btn-primary btn-sm" style="margin-top:12px;width:100%;justify-content:center"
+            onclick="seleccionarHab(${h.ID_HABITACION || h.id_habitacion})">
+            Reservar esta habitación
+          </button>
+        </div>`).join('');
+    } catch(e) { grid.innerHTML = `<div class="empty-state">Error: ${e.message}</div>`; }
+  }
+
+  function seleccionarHab(id) {
+    showSection('reservar');
+    document.getElementById('resHabId').value = id;
+    showToast(`Habitación #${id} seleccionada`, 'info');
+  }
+
+  // ── REGISTRAR HUÉSPED ──
+  let ultimoHuespedId = null;
+  async function registrarHuesped() {
+    const body = {
+      nombre: document.getElementById('regNombre').value,
+      apellido: document.getElementById('regApellido').value,
+      dni: document.getElementById('regDni').value,
+      email: document.getElementById('regEmail').value,
+      telefono: document.getElementById('regTel').value,
+    };
+    if (!body.nombre || !body.apellido || !body.dni) { showToast('Nombre, apellido y DNI son requeridos', 'error'); return; }
+    try {
+      await Huespedes.create(body);
+      // Obtener el ID del huésped recién creado buscando por DNI
+      const todos = await Huespedes.getAll();
+      const nuevo = todos.find(h => (h.DNI || h.dni) === body.dni);
+      if (nuevo) {
+        const id = nuevo.ID_HUESPED || nuevo.id_huesped;
+        document.getElementById('resHuespedId').value = id;
+        document.getElementById('huespedRegistrado').textContent = `✅ Registrado con ID: ${id}`;
+        showToast(`Huésped registrado con ID: ${id}`, 'success');
+      } else {
+        showToast('Registrado. Busca tu ID en la lista de huéspedes.', 'info');
+      }
+    } catch(e) { showToast(e.message, 'error'); }
+  }
+
+  // ── CREAR RESERVA ──
+  async function crearReserva() {
+    const body = {
+      id_huesped: document.getElementById('resHuespedId').value,
+      id_habitacion: document.getElementById('resHabId').value,
+      fecha_entrada: document.getElementById('resEntradaC').value,
+      fecha_salida: document.getElementById('resSalidaC').value,
+    };
+    if (!body.id_huesped || !body.id_habitacion || !body.fecha_entrada || !body.fecha_salida) {
+      showToast('Completa todos los campos', 'error'); return;
+    }
+    try {
+      await Reservas.create(body);
+      // Obtener el ID de la reserva recién creada
+      const todas = await Reservas.getAll();
+      const ultima = todas[todas.length - 1];
+      const idRes = ultima ? (ultima.ID_RESERVA || ultima.id_reserva) : '—';
+      document.getElementById('reservaId').textContent = idRes;
+      document.getElementById('reservaConfirmada').style.display = 'block';
+      document.getElementById('pagoResId').value = idRes;
+      showToast('¡Reserva creada! Ahora puedes pagar.', 'success');
+    } catch(e) { showToast(e.message, 'error'); }
+  }
+
+  // ── MIS RESERVAS ──
+  async function buscarReservas() {
+    const idHuesped = document.getElementById('buscarHuespedId').value;
+    if (!idHuesped) { showToast('Ingresa tu ID de huésped', 'error'); return; }
+    try {
+      const todas = await Reservas.getAll();
+      const mias = todas.filter(r => String(r.ID_HUESPED || r.id_huesped) === String(idHuesped));
+      document.getElementById('tablaResCliente').innerHTML = mias.map(r => `
+        <tr>
+          <td>#${r.ID_RESERVA || r.id_reserva}</td>
+          <td>${r.NUMERO_HABITACION || r.numero_habitacion || r.ID_HABITACION || '—'}</td>
+          <td>${formatDate(r.FECHA_ENTRADA || r.fecha_entrada)}</td>
+          <td>${formatDate(r.FECHA_SALIDA || r.fecha_salida)}</td>
+          <td>${badgeEstado(r.ESTADO || r.estado || 'ACTIVA')}</td>
+          <td>
+            <button class="btn btn-sm btn-success" onclick="irAPagar(${r.ID_RESERVA || r.id_reserva})">💳 Pagar</button>
+          </td>
+        </tr>`).join('') || '<tr><td colspan="6" class="empty-state">No se encontraron reservas para este ID</td></tr>';
+    } catch(e) { showToast(e.message, 'error'); }
+  }
+
+  function irAPagar(idReserva) {
+    showSection('pagar');
+    document.getElementById('pagoResId').value = idReserva;
+    showToast(`Reserva #${idReserva} lista para pagar`, 'info');
+  }
+
+  // ── PAGAR ──
+  async function realizarPago() {
+    const id_reserva = document.getElementById('pagoResId').value;
+    const metodo_pago = document.getElementById('pagoMetodo').value;
+    if (!id_reserva) { showToast('Ingresa el ID de reserva', 'error'); return; }
+    try {
+      await Pagos.create({ id_reserva, metodo_pago });
+      document.getElementById('pagoConfirmado').style.display = 'block';
+      showToast('¡Pago registrado exitosamente!', 'success');
+    } catch(e) { showToast(e.message, 'error'); }
+  }
+
+  // ── INIT ──
+  loadHabDisponibles();
+</script>
+</body>
+</html>
+
+ORA-06550: line 1, column 30: PLS-00302: component 'LISTAR_TODAS' must be declared ORA-06550: line 1, column 7: PL/SQL: Statement ignored Help: https://docs.oracle.com/error-help/db/ora-06550/

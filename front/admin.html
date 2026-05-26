@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — Hotel PLSQL</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+<div class="app-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">🏨</div>
+      <h2>Hotel PLSQL</h2>
+      <span class="role-badge">Administrador</span>
+    </div>
+    <nav>
+      <div class="nav-item active" onclick="showSection('dashboard')"><span class="icon">📊</span><span>Dashboard</span></div>
+      <div class="nav-item" onclick="showSection('habitaciones')"><span class="icon">🛏️</span><span>Habitaciones</span></div>
+      <div class="nav-item" onclick="showSection('reservas')"><span class="icon">📅</span><span>Reservas</span></div>
+      <div class="nav-item" onclick="showSection('pagos')"><span class="icon">💳</span><span>Pagos</span></div>
+      <div class="nav-item" onclick="showSection('huespedes')"><span class="icon">👥</span><span>Clientes</span></div>
+      <div class="nav-item" onclick="showSection('empleados')"><span class="icon">👔</span><span>Empleados</span></div>
+      <div class="nav-item" onclick="showSection('servicios')"><span class="icon">🛎️</span><span>Servicios</span></div>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="logout-btn" onclick="logout()">🚪 Cerrar sesión</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-content">
+    <div class="topbar">
+      <h1 id="pageTitle">Dashboard</h1>
+      <span style="font-size:0.85rem;color:var(--muted)">👑 Administrador</span>
+    </div>
+
+    <div class="page-content">
+
+      <!-- DASHBOARD -->
+      <div id="sec-dashboard" class="section active">
+        <div class="stats-grid" id="statsGrid">
+          <div class="stat-card"><div class="stat-icon">🛏️</div><div class="stat-value" id="st-hab">—</div><div class="stat-label">Habitaciones</div></div>
+          <div class="stat-card"><div class="stat-icon">📅</div><div class="stat-value" id="st-res">—</div><div class="stat-label">Reservas activas</div></div>
+          <div class="stat-card"><div class="stat-icon">👥</div><div class="stat-value" id="st-hue">—</div><div class="stat-label">Clientes</div></div>
+          <div class="stat-card"><div class="stat-icon">👔</div><div class="stat-value" id="st-emp">—</div><div class="stat-label">Empleados</div></div>
+          <div class="stat-card"><div class="stat-icon">🛎️</div><div class="stat-value" id="st-ser">—</div><div class="stat-label">Servicios</div></div>
+          <div class="stat-card"><div class="stat-icon">💳</div><div class="stat-value" id="st-pag">—</div><div class="stat-label">Pagos</div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h2>Reservas activas recientes</h2></div>
+          <div class="table-wrap"><table>
+            <thead><tr><th>ID</th><th>Huésped</th><th>Habitación</th><th>Entrada</th><th>Salida</th><th>Estado</th></tr></thead>
+            <tbody id="dashReservas"><tr><td colspan="6" class="loading">Cargando...</td></tr></tbody>
+          </table></div>
+        </div>
+      </div>
+
+      <!-- HABITACIONES -->
+      <div id="sec-habitaciones" class="section">
+        <div class="card">
+          <div class="card-header">
+            <h2>Habitaciones</h2>
+            <button class="btn btn-primary" onclick="openModal('modalHab')">+ Nueva</button>
+          </div>
+          <div class="table-wrap"><table>
+            <thead><tr><th>ID</th><th>Número</th><th>Tipo</th><th>Piso</th><th>Estado</th><th>Acciones</th></tr></thead>
+            <tbody id="tablaHab"><tr><td colspan="6" class="loading">Cargando...</td></tr></tbody>
+          </table></div>
+        </div>
+      </div>
+
+      <!-- RESERVAS -->
+      <div id="sec-reservas" class="section">
+        <div class="card">
+          <div class="card-header">
+            <h2>Reservas</h2>
+            <button class="btn btn-primary" onclick="openModal('modalRes')">+ Nueva</button>
+          </div>
+          <div class="table-wrap"><table>
+            <thead><tr><th>ID</th><th>Huésped</th><th>Habitación</th><th>Entrada</th><th>Salida</th><th>Estado</th><th>Acciones</th></tr></thead>
+            <tbody id="tablaRes"><tr><td colspan="7" class="loading">Cargando...</td></tr></tbody>
+          </table></div>
+        </div>
+      </div>
+
+      <!-- PAGOS -->
+      <div id="sec-pagos" class="section">
+        <div class="card">
+          <div class="card-header"><h2>Pagos</h2></div>
+          <div class="table-wrap"><table>
+            <thead><tr><th>ID</th><th>Reserva</th><th>Monto</th><th>Método</th><th>Fecha</th><th>Estado</th><th>Acciones</th></tr></thead>
+            <tbody id="tablaPag"><tr><td colspan="7" class="loading">Cargando...</td></tr></tbody>
+          </table></div>
+        </div>
+      </div>
+
+      <!-- HUÉSPEDES -->
+      <div id="sec-huespedes" class="section">
+        <div class="card">
+          <div class="card-header">
+            <h2>Clientes / Huéspedes</h2>
+            <button class="btn btn-primary" onclick="openModal('modalHue')">+ Nuevo</button>
+          </div>
+          <div class="table-wrap"><table>
+            <thead><tr><th>ID</th><th>Nombre</th><th>DNI</th><th>Email</th><th>Teléfono</th><th>Acciones</th></tr></thead>
+            <tbody id="tablaHue"><tr><td colspan="6" class="loading">Cargando...</td></tr></tbody>
+          </table></div>
+        </div>
+      </div>
+
+      <!-- EMPLEADOS -->
+      <div id="sec-empleados" class="section">
+        <div class="card">
+          <div class="card-header">
+            <h2>Empleados</h2>
+            <button class="btn btn-primary" onclick="openModal('modalEmp')">+ Nuevo</button>
+          </div>
+          <div class="table-wrap"><table>
+            <thead><tr><th>ID</th><th>Nombre</th><th>Cargo</th><th>Email</th><th>Salario</th><th>Acciones</th></tr></thead>
+            <tbody id="tablaEmp"><tr><td colspan="6" class="loading">Cargando...</td></tr></tbody>
+          </table></div>
+        </div>
+      </div>
+
+      <!-- SERVICIOS -->
+      <div id="sec-servicios" class="section">
+        <div class="card">
+          <div class="card-header">
+            <h2>Servicios</h2>
+            <button class="btn btn-primary" onclick="openModal('modalSer')">+ Nuevo</button>
+          </div>
+          <div class="table-wrap"><table>
+            <thead><tr><th>ID</th><th>Nombre</th><th>Descripción</th><th>Precio</th><th>Acciones</th></tr></thead>
+            <tbody id="tablaSer"><tr><td colspan="5" class="loading">Cargando...</td></tr></tbody>
+          </table></div>
+        </div>
+      </div>
+
+    </div><!-- /page-content -->
+  </div><!-- /main-content -->
+</div><!-- /app-layout -->
+
+<!-- ── MODALES ── -->
+
+<!-- Habitación -->
+<div class="modal-overlay" id="modalHab">
+  <div class="modal">
+    <h3 id="modalHabTitle">Nueva Habitación</h3>
+    <input type="hidden" id="habId" />
+    <div class="form-grid">
+      <div class="form-group"><label>Número</label><input type="number" id="habNumero" /></div>
+      <div class="form-group"><label>ID Tipo</label><input type="number" id="habTipo" /></div>
+      <div class="form-group"><label>Piso</label><input type="number" id="habPiso" /></div>
+      <div class="form-group" id="habEstadoGroup" style="display:none">
+        <label>Estado</label>
+        <select id="habEstado">
+          <option>DISPONIBLE</option><option>OCUPADA</option><option>MANTENIMIENTO</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('modalHab')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveHab()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Reserva -->
+<div class="modal-overlay" id="modalRes">
+  <div class="modal">
+    <h3>Nueva Reserva</h3>
+    <div class="form-grid">
+      <div class="form-group"><label>ID Huésped</label><input type="number" id="resHuesped" /></div>
+      <div class="form-group"><label>ID Habitación</label><input type="number" id="resHab" /></div>
+      <div class="form-group"><label>ID Empleado (opcional)</label><input type="number" id="resEmp" /></div>
+      <div class="form-group"><label>Fecha Entrada</label><input type="date" id="resEntrada" /></div>
+      <div class="form-group"><label>Fecha Salida</label><input type="date" id="resSalida" /></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('modalRes')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveRes()">Crear Reserva</button>
+    </div>
+  </div>
+</div>
+
+<!-- Huésped -->
+<div class="modal-overlay" id="modalHue">
+  <div class="modal">
+    <h3 id="modalHueTitle">Nuevo Huésped</h3>
+    <input type="hidden" id="hueId" />
+    <div class="form-grid">
+      <div class="form-group"><label>Nombre</label><input type="text" id="hueNombre" /></div>
+      <div class="form-group"><label>Apellido</label><input type="text" id="hueApellido" /></div>
+      <div class="form-group"><label>DNI</label><input type="text" id="hueDni" /></div>
+      <div class="form-group"><label>Email</label><input type="email" id="hueEmail" /></div>
+      <div class="form-group"><label>Teléfono</label><input type="text" id="hueTel" /></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('modalHue')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveHue()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Empleado -->
+<div class="modal-overlay" id="modalEmp">
+  <div class="modal">
+    <h3 id="modalEmpTitle">Nuevo Empleado</h3>
+    <input type="hidden" id="empId" />
+    <div class="form-grid">
+      <div class="form-group"><label>Nombre</label><input type="text" id="empNombre" /></div>
+      <div class="form-group"><label>Apellido</label><input type="text" id="empApellido" /></div>
+      <div class="form-group"><label>Cargo</label><input type="text" id="empCargo" /></div>
+      <div class="form-group"><label>Email</label><input type="email" id="empEmail" /></div>
+      <div class="form-group"><label>Salario</label><input type="number" id="empSalario" /></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('modalEmp')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveEmp()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Servicio -->
+<div class="modal-overlay" id="modalSer">
+  <div class="modal">
+    <h3 id="modalSerTitle">Nuevo Servicio</h3>
+    <input type="hidden" id="serId" />
+    <div class="form-grid">
+      <div class="form-group"><label>Nombre</label><input type="text" id="serNombre" /></div>
+      <div class="form-group"><label>Precio</label><input type="number" id="serPrecio" /></div>
+      <div class="form-group" style="grid-column:1/-1"><label>Descripción</label><input type="text" id="serDesc" /></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('modalSer')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveSer()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div id="toastContainer" class="toast-container"></div>
+<script src="js/api.js"></script>
+<script>
+  // ── AUTH ──
+  if (sessionStorage.getItem('role') !== 'admin') window.location.href = 'login.html';
+  function logout() { sessionStorage.clear(); window.location.href = 'login.html'; }
+
+  // ── NAV ──
+  const titles = { dashboard:'Dashboard', habitaciones:'Habitaciones', reservas:'Reservas', pagos:'Pagos', huespedes:'Clientes / Huéspedes', empleados:'Empleados', servicios:'Servicios' };
+  function showSection(name) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById(`sec-${name}`).classList.add('active');
+    document.querySelector(`[onclick="showSection('${name}')"]`).classList.add('active');
+    document.getElementById('pageTitle').textContent = titles[name];
+    loaders[name]?.();
+  }
+
+  // ── MODAL ──
+  function openModal(id) { document.getElementById(id).classList.add('open'); }
+  function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+  document.querySelectorAll('.modal-overlay').forEach(m => m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); }));
+
+  // ── LOADERS ──
+  const loaders = {
+    dashboard: loadDashboard,
+    habitaciones: loadHab,
+    reservas: loadRes,
+    pagos: loadPag,
+    huespedes: loadHue,
+    empleados: loadEmp,
+    servicios: loadSer,
+  };
+
+  async function loadDashboard() {
+    try {
+      const [habs, resActivas, huespedes, empleados, servicios, pagos] = await Promise.all([
+        Habitaciones.getAll(), Reservas.getActivas(), Huespedes.getAll(),
+        Empleados.getAll(), Servicios.getAll(), Pagos.getAll()
+      ]);
+      document.getElementById('st-hab').textContent = habs.length;
+      document.getElementById('st-res').textContent = resActivas.length;
+      document.getElementById('st-hue').textContent = huespedes.length;
+      document.getElementById('st-emp').textContent = empleados.length;
+      document.getElementById('st-ser').textContent = servicios.length;
+      document.getElementById('st-pag').textContent = pagos.length;
+
+      document.getElementById('dashReservas').innerHTML = resActivas.slice(0,8).map(r => `
+        <tr>
+          <td>#${r.ID_RESERVA || r.id_reserva}</td>
+          <td>${r.NOMBRE_HUESPED || r.nombre_huesped || '—'}</td>
+          <td>${r.NUMERO_HABITACION || r.numero_habitacion || r.ID_HABITACION || '—'}</td>
+          <td>${formatDate(r.FECHA_ENTRADA || r.fecha_entrada)}</td>
+          <td>${formatDate(r.FECHA_SALIDA || r.fecha_salida)}</td>
+          <td>${badgeEstado(r.ESTADO || r.estado || 'ACTIVA')}</td>
+        </tr>`).join('') || '<tr><td colspan="6" class="empty-state">Sin reservas activas</td></tr>';
+    } catch(e) { showToast(e.message, 'error'); }
+  }
+
+  // ── HABITACIONES ──
+  async function loadHab() {
+    try {
+      const rows = await Habitaciones.getAll();
+      document.getElementById('tablaHab').innerHTML = rows.map(h => `
+        <tr>
+          <td>${h.ID_HABITACION || h.id_habitacion}</td>
+          <td>${h.NUMERO_HABITACION || h.numero_habitacion}</td>
+          <td>${h.ID_TIPO || h.id_tipo || '—'}</td>
+          <td>${h.PISO || h.piso}</td>
+          <td>${badgeEstado(h.ESTADO || h.estado)}</td>
+          <td>
+            <button class="btn btn-sm btn-outline" onclick="editHab(${h.ID_HABITACION || h.id_habitacion}, '${h.ESTADO || h.estado}')">✏️ Estado</button>
+            <button class="btn btn-sm btn-danger" onclick="delHab(${h.ID_HABITACION || h.id_habitacion})">🗑️</button>
+          </td>
+        </tr>`).join('') || '<tr><td colspan="6" class="empty-state">Sin habitaciones</td></tr>';
+    } catch(e) { showToast(e.message, 'error'); }
+  }
+
+  function editHab(id, estado) {
+    document.getElementById('habId').value = id;
+    document.getElementById('habEstado').value = estado;
+    document.getElementById('habEstadoGroup').style.display = 'flex';
+    document.getElementById('modalHabTitle').textContent = 'Cambiar Estado';
+    document.getElementById('habNumero').closest('.form-grid').querySelectorAll('.form-group:not(#habEstadoGroup)').forEach(g => g.style.display = 'none');
+    openModal('modalHab');
+  }
+
+  async function saveHab() {
+    const id = document.getElementById('habId').value;
+    try {
+      if (id) {
+        await Habitaciones.updateEstado(id, document.getElementById('habEstado').value);
+        showToast('Estado actualizado', 'success');
+      } else {
+        await Habitaciones.create({
+          numero_habitacion: document.getElementById('habNumero').value,
+          id_tipo: document.getElementById('habTipo').value,
+          piso: document.getElementById('habPiso').value,
+        });
+        showToast('Habitación creada', 'success');
+      }
+      closeModal('modalHab'); loadHab();
+    } catch(e) { showToast(e.message, 'error'); }
+  }
+
+  async function delHab(id) {
+    if (!confirm('¿Eliminar habitación?')) return;
+    try { await Habitaciones.delete(id); showToast('Eliminada', 'success'); loadHab(); }
+    catch(e) { showToast(e.message, 'error'); }
+  }
+
+  // ── RESERVAS ──
+  async function loadRes() {
+    try {
+      const rows = await Reservas.getAll();
+      document.getElementById('tablaRes').innerHTML = rows.map(r => `
+        <tr>
+          <td>#${r.ID_RESERVA || r.id_reserva}</td>
+          <td>${r.NOMBRE_HUESPED || r.nombre_huesped || r.ID_HUESPED || '—'}</td>
+          <td>${r.NUMERO_HABITACION || r.numero_habitacion || r.ID_HABITACION || '—'}</td>
+          <td>${formatDate(r.FECHA_ENTRADA || r.fecha_entrada)}</td>
+          <td>${formatDate(r.FECHA_SALIDA || r.fecha_salida)}</td>
+          <td>${badgeEstado(r.ESTADO || r.estado || 'ACTIVA')}</td>
+          <td>
+            <button class="btn btn-sm btn-success" onclick="completarRes(${r.ID_RESERVA || r.id_reserva})">✅</button>
+            <button class="btn btn-sm btn-outline" onclick="cancelarRes(${r.ID_RESERVA || r.id_reserva})">❌</button>
+            <button class="btn btn-sm btn-danger" onclick="delRes(${r.ID_RESERVA || r.id_reserva})">🗑️</button>
+          </td>
+        </tr>`).join('') || '<tr><td colspan="7" class="empty-state">Sin reservas</td></tr>';
+    } catch(e) { showToast(e.message, 'error'); }
+  }
+
+  async function saveRes() {
+    try {
+      await Reservas.create({
+        id_huesped: document.getElementById('resHuesped').value,
+        id_habitacion: document.getElementById('resHab').value,
+        id_empleado: document.getElementById('resEmp').value || null,
+        fecha_entrada: document.getElementById('resEntrada').value,
+        fecha_salida: document.getElementById('resSalida').value,
+      });
+      showToast('Reserva creada', 'success'); closeModal('modalRes'); loadRes();
+    } catch(e) { showToast(e.message, 'error'); }
+  }
+
+  async function cancelarRes(id) {
+    if (!confirm('¿Cancelar reserva?')) return;
+    try { await Reservas.cancelar(id); showToast('Cancelada', 'info'); loadRes(); }
+    catch(e) { showToast(e.message, 'error'); }
+  }
+
+  async function completarRes(id) {
+    try { await Reservas.completar(id); showToast('Completada ✅', 'success'); loadRes(); }
+    catch(e) { showToast(e.message, 'error'); }
+  }
+
+  async function delRes(id) {
+    if (!confirm('¿Eliminar reserva?')) return;
+    try { await Reservas.delete(id); showToast('Eliminada', 'success'); loadRes(); }
+    catch(e) { showToast(e.message, 'error'); }
+  }
+
+  // ── PAGOS ──
+  async function loadPag() {
+    try {
+      const rows = await Pagos.getAll();
+      document.getElementById('tablaPag').innerHTML = rows.map(p => `
+        <tr>
+          <td>#${p.ID_PAGO || p.id_pago}</td>
+          <td>#${p.ID_RESERVA || p.id_reserva}</td>
+          <td>$${p.MONTO || p.monto || '—'}</td>
+          <td>${p.METODO_PAGO || p.metodo_pago || '—'}</td>
+          <td>${formatDate(p.FECHA_PAGO || p.fecha_pago)}</td>
+          <td>${badgeEstado(p.ESTADO || p.estado || 'PAGADO')}</td>
+          <td><button class="btn btn-sm btn-danger" onclick="anularPago(${p.ID_PAGO || p.id_pago})">Anular</button></td>
+        </tr>`).join('') || '<tr><td colspan="7" class="empty-state">Sin pagos</td></tr>';
+    } catch(e) { showToast(e.message, 'error'); }
+  }
+
+  async function anularPago(id) {
+    if (!confirm('¿Anular pago?')) return;
+    try { await Pagos.anular(id); showToast('Pago anulado', 'info'); loadPag(); }
+    catch(e) { showToast(e.message, 'error'); }
+  }
+
+  // ── HUÉSPEDES ──
+  async function loadHue() {
+    try {
+      const rows = await Huespedes.getAll();
+      document.getElementById('tablaHue').innerHTML = rows.map(h => `
+        <tr>
+          <td>${h.ID_HUESPED || h.id_huesped}</td>
+          <td>${h.NOMBRE || h.nombre} ${h.APELLIDO || h.apellido}</td>
+          <td>${h.DNI || h.dni}</td>
+          <td>${h.EMAIL || h.email || '—'}</td>
+          <td>${h.TELEFONO || h.telefono || '—'}</td>
+          <td>
+            <button class="btn btn-sm btn-outline" onclick="editHue(${JSON.stringify(h).replace(/"/g,'&quot;')})">✏️</button>
+            <button class="btn btn-sm btn-danger" onclick="delHue(${h.ID_HUESPED || h.id_huesped})">🗑️</button>
+          </td>
+        </tr>`).join('') || '<tr><td colspan="6" class="empty-state">Sin huéspedes</td></tr>';
+    } catch(e) { showToast(e.message, 'error'); }
+  }
+
+  function editHue(h) {
+    document.getElementById('hueId').value = h.ID_HUESPED || h.id_huesped;
+    document.getElementById('hueNombre').value = h.NOMBRE || h.nombre;
+    document.getElementById('hueApellido').value = h.APELLIDO || h.apellido;
+    document.getElementById('hueDni').value = h.DNI || h.dni;
+    document.getElementById('hueEmail').value = h.EMAIL || h.email || '';
+    document.getElementById('hueTel').value = h.TELEFONO || h.telefono || '';
+    document.getElementById('modalHueTitle').textContent = 'Editar Huésped';
+    openModal('modalHue');
+  }
+
+  async function saveHue() {
+    const id = document.getElementById('hueId').value;
+    const body = {
+      nombre: document.getElementById('hueNombre').value,
+      apellido: document.getElementById('hueApellido').value,
+      dni: document.getElementById('hueDni').value,
+      email: document.getElementById('hueEmail').value,
+      telefono: document.getElementById('hueTel').value,
+    };
+    try {
+      id ? await Huespedes.update(id, body) : await Huespedes.create(body);
+      showToast(id ? 'Actualizado' : 'Creado', 'success');
+      closeModal('modalHue'); loadHue();
+    } catch(e) { showToast(e.message, 'error'); }
+  }
+
+  async function delHue(id) {
+    if (!confirm('¿Eliminar huésped?')) return;
+    try { await Huespedes.delete(id); showToast('Eliminado', 'success'); loadHue(); }
+    catch(e) { showToast(e.message, 'error'); }
+  }
+
+  // ── EMPLEADOS ──
+  async function loadEmp() {
+    try {
+      const rows = await Empleados.getAll();
+      document.getElementById('tablaEmp').innerHTML = rows.map(e => `
+        <tr>
+          <td>${e.ID_EMPLEADO || e.id_empleado}</td>
+          <td>${e.NOMBRE || e.nombre} ${e.APELLIDO || e.apellido}</td>
+          <td>${e.CARGO || e.cargo}</td>
+          <td>${e.EMAIL || e.email || '—'}</td>
+          <td>$${e.SALARIO || e.salario || '—'}</td>
+          <td>
+            <button class="btn btn-sm btn-outline" onclick="editEmp(${JSON.stringify(e).replace(/"/g,'&quot;')})">✏️</button>
+            <button class="btn btn-sm btn-danger" onclick="delEmp(${e.ID_EMPLEADO || e.id_empleado})">🗑️</button>
+          </td>
+        </tr>`).join('') || '<tr><td colspan="6" class="empty-state">Sin empleados</td></tr>';
+    } catch(e) { showToast(e.message, 'error'); }
+  }
+
+  function editEmp(e) {
+    document.getElementById('empId').value = e.ID_EMPLEADO || e.id_empleado;
+    document.getElementById('empNombre').value = e.NOMBRE || e.nombre;
+    document.getElementById('empApellido').value = e.APELLIDO || e.apellido;
+    document.getElementById('empCargo').value = e.CARGO || e.cargo;
+    document.getElementById('empEmail').value = e.EMAIL || e.email || '';
+    document.getElementById('empSalario').value = e.SALARIO || e.salario || '';
+    document.getElementById('modalEmpTitle').textContent = 'Editar Empleado';
+    openModal('modalEmp');
+  }
+
+  async function saveEmp() {
+    const id = document.getElementById('empId').value;
+    const body = {
+      nombre: document.getElementById('empNombre').value,
+      apellido: document.getElementById('empApellido').value,
+      cargo: document.getElementById('empCargo').value,
+      email: document.getElementById('empEmail').value,
+      salario: document.getElementById('empSalario').value,
+    };
+    try {
+      id ? await Empleados.update(id, body) : await Empleados.create(body);
+      showToast(id ? 'Actualizado' : 'Creado', 'success');
+      closeModal('modalEmp'); loadEmp();
+    } catch(e) { showToast(e.message, 'error'); }
+  }
+
+  async function delEmp(id) {
+    if (!confirm('¿Eliminar empleado?')) return;
+    try { await Empleados.delete(id); showToast('Eliminado', 'success'); loadEmp(); }
+    catch(e) { showToast(e.message, 'error'); }
+  }
+
+  // ── SERVICIOS ──
+  async function loadSer() {
+    try {
+      const rows = await Servicios.getAll();
+      document.getElementById('tablaSer').innerHTML = rows.map(s => `
+        <tr>
+          <td>${s.ID_SERVICIO || s.id_servicio}</td>
+          <td>${s.NOMBRE || s.nombre}</td>
+          <td>${s.DESCRIPCION || s.descripcion || '—'}</td>
+          <td>$${s.PRECIO || s.precio}</td>
+          <td>
+            <button class="btn btn-sm btn-outline" onclick="editSer(${JSON.stringify(s).replace(/"/g,'&quot;')})">✏️</button>
+            <button class="btn btn-sm btn-danger" onclick="delSer(${s.ID_SERVICIO || s.id_servicio})">🗑️</button>
+          </td>
+        </tr>`).join('') || '<tr><td colspan="5" class="empty-state">Sin servicios</td></tr>';
+    } catch(e) { showToast(e.message, 'error'); }
+  }
+
+  function editSer(s) {
+    document.getElementById('serId').value = s.ID_SERVICIO || s.id_servicio;
+    document.getElementById('serNombre').value = s.NOMBRE || s.nombre;
+    document.getElementById('serPrecio').value = s.PRECIO || s.precio;
+    document.getElementById('serDesc').value = s.DESCRIPCION || s.descripcion || '';
+    document.getElementById('modalSerTitle').textContent = 'Editar Servicio';
+    openModal('modalSer');
+  }
+
+  async function saveSer() {
+    const id = document.getElementById('serId').value;
+    const body = {
+      nombre: document.getElementById('serNombre').value,
+      descripcion: document.getElementById('serDesc').value,
+      precio: document.getElementById('serPrecio').value,
+    };
+    try {
+      id ? await Servicios.update(id, body) : await Servicios.create(body);
+      showToast(id ? 'Actualizado' : 'Creado', 'success');
+      closeModal('modalSer'); loadSer();
+    } catch(e) { showToast(e.message, 'error'); }
+  }
+
+  async function delSer(id) {
+    if (!confirm('¿Eliminar servicio?')) return;
+    try { await Servicios.delete(id); showToast('Eliminado', 'success'); loadSer(); }
+    catch(e) { showToast(e.message, 'error'); }
+  }
+
+  // ── INIT ──
+  loadDashboard();
+</script>
+</body>
+</html>

@@ -6,26 +6,26 @@ const router = Router();
 
 const METODOS_VALIDOS = ['EFECTIVO', 'TARJETA', 'TRANSFERENCIA'];
 
-// GET /api/pagos
-router.get('/', asyncHandler(async (_req, res) => {
-  const rows = await execCursor(`BEGIN :cur := pkg_pago.listar_todos(); END;`);
-  res.json(rows);
-}));
+// // GET /api/pagos
+// router.get('/', asyncHandler(async (_req, res) => {
+//   const rows = await execCursor(`BEGIN :cur := pkg_pago.consultar(); END;`);
+//   res.json(rows);
+// }));
 
-// GET /api/pagos/reserva/:idReserva
-router.get('/reserva/:idReserva', asyncHandler(async (req, res) => {
-  const rows = await execCursor(
-    `BEGIN :cur := pkg_pago.obtener_por_reserva(:id); END;`,
-    { id: Number(req.params.idReserva) }
-  );
-  if (!rows.length) return res.status(404).json({ error: 'No hay pago registrado para esta reserva' });
-  res.json(rows[0]);
-}));
+// // GET /api/pagos/reserva/:idReserva
+// router.get('/reserva/:idReserva', asyncHandler(async (req, res) => {
+//   const rows = await execCursor(
+//     `BEGIN :cur := pkg_pago.consultar(:id); END;`,
+//     { id: Number(req.params.idReserva) }
+//   );
+//   if (!rows.length) return res.status(404).json({ error: 'No hay pago registrado para esta reserva' });
+//   res.json(rows[0]);
+// }));
 
 // GET /api/pagos/:id
 router.get('/:id', asyncHandler(async (req, res) => {
   const rows = await execCursor(
-    `BEGIN :cur := pkg_pago.obtener(:id); END;`,
+    `BEGIN :cur := pkg_pago.consultar(:id); END;`,
     { id: Number(req.params.id) }
   );
   if (!rows.length) return res.status(404).json({ error: 'Pago no encontrado' });

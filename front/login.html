@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hotel PLSQL — Login</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+<div class="login-wrapper">
+  <div class="login-card">
+    <div class="logo">🏨</div>
+    <h1>Hotel PLSQL</h1>
+    <p>Selecciona tu rol para continuar</p>
+
+    <div class="role-selector">
+      <button class="role-btn active" data-role="admin">👑 Admin</button>
+      <button class="role-btn" data-role="empleado">👔 Empleado</button>
+      <button class="role-btn" data-role="cliente">🧳 Cliente</button>
+    </div>
+
+    <div class="form-group" style="margin-bottom:14px">
+      <label>Usuario</label>
+      <input type="text" id="username" placeholder="usuario" />
+    </div>
+    <div class="form-group" style="margin-bottom:20px">
+      <label>Contraseña</label>
+      <input type="password" id="password" placeholder="••••••••" />
+    </div>
+
+    <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="doLogin()">
+      Ingresar
+    </button>
+
+    <p style="margin-top:16px;font-size:0.78rem;color:var(--muted)">
+      Demo: admin/master · empleado/emp123 · cliente/cli123
+    </p>
+  </div>
+</div>
+
+<div id="toastContainer" class="toast-container"></div>
+<script src="js/api.js"></script>
+<script>
+  const USERS = {
+    admin:    { pass: 'master',  role: 'admin',    page: 'admin.html' },
+    empleado: { pass: 'emp123',  role: 'empleado', page: 'empleado.html' },
+    cliente:  { pass: 'cli123',  role: 'cliente',  page: 'cliente.html' },
+  };
+
+  let selectedRole = 'admin';
+
+  document.querySelectorAll('.role-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedRole = btn.dataset.role;
+      document.getElementById('username').value = btn.dataset.role;
+    });
+  });
+
+  function doLogin() {
+    const user = document.getElementById('username').value.trim();
+    const pass = document.getElementById('password').value.trim();
+    const found = USERS[user];
+    if (!found || found.pass !== pass || found.role !== selectedRole) {
+      showToast('Credenciales incorrectas', 'error'); return;
+    }
+    sessionStorage.setItem('role', found.role);
+    sessionStorage.setItem('user', user);
+    window.location.href = found.page;
+  }
+</script>
+</body>
+</html>

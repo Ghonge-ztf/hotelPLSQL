@@ -6,7 +6,7 @@ const router = Router();
 
 // GET /api/reservas
 router.get('/', asyncHandler(async (_req, res) => {
-  const rows = await execCursor(`BEGIN :cur := pkg_reserva.listar_todas(); END;`);
+  const rows = await execCursor(`BEGIN :cur := pkg_reserva.listar_activas(); END;`);
   res.json(rows);
 }));
 
