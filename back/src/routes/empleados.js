@@ -6,7 +6,7 @@ const router = Router();
 
 // GET /api/empleados
 router.get('/', asyncHandler(async (_req, res) => {
-  const rows = await execCursor(`BEGIN :cur := pkg_empleado.listar(); END;`);
+  const rows = await execCursor(`BEGIN :cur := pkg_empleado.listar_todos(); END;`);
   res.json(rows);
 }));
 

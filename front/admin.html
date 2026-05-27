@@ -308,7 +308,7 @@
         <tr>
           <td>${h.ID_HABITACION || h.id_habitacion}</td>
           <td>${h.NUMERO_HABITACION || h.numero_habitacion}</td>
-          <td>${h.ID_TIPO || h.id_tipo || '—'}</td>
+          <td>${h.TIPO || h.id_tipo || '—'}</td>
           <td>${h.PISO || h.piso}</td>
           <td>${badgeEstado(h.ESTADO || h.estado)}</td>
           <td>
@@ -356,20 +356,45 @@
   async function loadRes() {
     try {
       const rows = await Reservas.getAll();
-      document.getElementById('tablaRes').innerHTML = rows.map(r => `
+      document.getElementById('tablaRes').innerHTML = rows.map(r => {
+        const id = r.ID_RESERVA || r.id_reserva;
+        const estado = r.ESTADO || r.estado || 'PENDIENTE';
+        // acciones según estado: PENDIENTE -> Activar (Check-in), ACTIVA -> Completar (Check-out)
+        let acciones = '';
+        if (estado === 'PENDIENTE') {
+          acciones = `
+            <button class="btn btn-sm btn-primary" onclick="activarRes(${id})">🟢 Check-in</button>
+            <button class="btn btn-sm btn-outline" onclick="cancelarRes(${id})">❌ Cancelar</button>
+            <button class="btn btn-sm btn-danger" onclick="delRes(${id})">🗑️</button>`;
+        } else if (estado === 'ACTIVA') {
+          acciones = `
+            <button class="btn btn-sm btn-success" onclick="completarRes(${id})">🔚 Check-out</button>
+            <button class="btn btn-sm btn-outline" onclick="cancelarRes(${id})">❌ Cancelar</button>`;
+        } else {
+          acciones = `<button class="btn btn-sm btn-danger" onclick="delRes(${id})">🗑️</button>`;
+        }
+
+        return `
         <tr>
-          <td>#${r.ID_RESERVA || r.id_reserva}</td>
+          <td>#${id}</td>
           <td>${r.NOMBRE_HUESPED || r.nombre_huesped || r.ID_HUESPED || '—'}</td>
           <td>${r.NUMERO_HABITACION || r.numero_habitacion || r.ID_HABITACION || '—'}</td>
           <td>${formatDate(r.FECHA_ENTRADA || r.fecha_entrada)}</td>
           <td>${formatDate(r.FECHA_SALIDA || r.fecha_salida)}</td>
-          <td>${badgeEstado(r.ESTADO || r.estado || 'ACTIVA')}</td>
-          <td>
-            <button class="btn btn-sm btn-success" onclick="completarRes(${r.ID_RESERVA || r.id_reserva})">✅</button>
-            <button class="btn btn-sm btn-outline" onclick="cancelarRes(${r.ID_RESERVA || r.id_reserva})">❌</button>
-            <button class="btn btn-sm btn-danger" onclick="delRes(${r.ID_RESERVA || r.id_reserva})">🗑️</button>
-          </td>
-        </tr>`).join('') || '<tr><td colspan="7" class="empty-state">Sin reservas</td></tr>';
+          <td>${badgeEstado(estado)}</td>
+          <td>${acciones}</td>
+        </tr>`;
+      }).join('') || '<tr><td colspan="7" class="empty-state">Sin reservas</td></tr>';
+    } catch(e) { showToast(e.message, 'error'); }
+  }
+
+  // ── CHECK-IN (activar reserva) ──
+  async function activarRes(id) {
+    if (!confirm('¿Realizar check-in y activar reserva?')) return;
+    try {
+      await Reservas.activar(id);
+      showToast('Check-in realizado. Reserva activada.', 'success');
+      loadRes(); loadDashboard();
     } catch(e) { showToast(e.message, 'error'); }
   }
 
@@ -411,7 +436,7 @@
         <tr>
           <td>#${p.ID_PAGO || p.id_pago}</td>
           <td>#${p.ID_RESERVA || p.id_reserva}</td>
-          <td>$${p.MONTO || p.monto || '—'}</td>
+          <td>$${p.MONTO_TOTAL || p.monto || '—'}</td>
           <td>${p.METODO_PAGO || p.metodo_pago || '—'}</td>
           <td>${formatDate(p.FECHA_PAGO || p.fecha_pago)}</td>
           <td>${badgeEstado(p.ESTADO || p.estado || 'PAGADO')}</td>

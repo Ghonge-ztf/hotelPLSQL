@@ -21,16 +21,18 @@ const Habitaciones = {
 };
 
 // ── RESERVAS ──
+// ── RESERVAS ──
 const Reservas = {
-  getAll: () => apiFetch('/reservas'),
-  getActivas: () => apiFetch('/reservas/activas'),
-  getById: (id) => apiFetch(`/reservas/${id}`),
-  create: (body) => apiFetch('/reservas', { method: 'POST', body: JSON.stringify(body) }),
-  cancelar: (id) => apiFetch(`/reservas/${id}/cancelar`, { method: 'PATCH' }),
-  completar: (id) => apiFetch(`/reservas/${id}/completar`, { method: 'PATCH' }),
-  delete: (id) => apiFetch(`/reservas/${id}`, { method: 'DELETE' }),
+  getAll:        ()    => apiFetch('/reservas'),
+  getActivas:    ()    => apiFetch('/reservas/activas'),
+  getByHuesped:  (id)  => apiFetch(`/reservas/huesped/${id}`),
+  getById:       (id)  => apiFetch(`/reservas/${id}`),
+  create:        (body)=> apiFetch('/reservas', { method: 'POST', body: JSON.stringify(body) }),
+  activar:       (id)  => apiFetch(`/reservas/${id}/activar`,  { method: 'PATCH' }),
+  cancelar:      (id)  => apiFetch(`/reservas/${id}/cancelar`, { method: 'PATCH' }),
+  completar:     (id)  => apiFetch(`/reservas/${id}/completar`,{ method: 'PATCH' }),
+  delete:        (id)  => apiFetch(`/reservas/${id}`,          { method: 'DELETE' }),
 };
-
 // ── PAGOS ──
 const Pagos = {
   getAll: () => apiFetch('/pagos'),

@@ -1,141 +1,240 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Empleado — Hotel PLSQL</title>
   <link rel="stylesheet" href="css/styles.css" />
 </head>
+
 <body>
-<div class="app-layout">
-  <aside class="sidebar">
-    <div class="sidebar-header">
-      <div class="logo">🏨</div>
-      <h2>Hotel PLSQL</h2>
-      <span class="role-badge">Empleado</span>
-    </div>
-    <nav>
-      <div class="nav-item active" onclick="showSection('reservas')"><span class="icon">📅</span><span>Reservas</span></div>
-      <div class="nav-item" onclick="showSection('pagos')"><span class="icon">💳</span><span>Pagos</span></div>
-      <div class="nav-item" onclick="showSection('habitaciones')"><span class="icon">🛏️</span><span>Habitaciones</span></div>
-    </nav>
-    <div class="sidebar-footer">
-      <button class="logout-btn" onclick="logout()">🚪 Cerrar sesión</button>
-    </div>
-  </aside>
-
-  <div class="main-content">
-    <div class="topbar">
-      <h1 id="pageTitle">Reservas</h1>
-      <span style="font-size:0.85rem;color:var(--muted)">👔 Empleado</span>
-    </div>
-    <div class="page-content">
-
-      <!-- RESERVAS (solo lectura) -->
-      <div id="sec-reservas" class="section active">
-        <div class="card">
-          <div class="card-header"><h2>Reservas activas</h2></div>
-          <div class="table-wrap"><table>
-            <thead><tr><th>ID</th><th>Huésped</th><th>Habitación</th><th>Entrada</th><th>Salida</th><th>Estado</th><th>Acciones</th></tr></thead>
-            <tbody id="tablaRes"><tr><td colspan="7" class="loading">Cargando...</td></tr></tbody>
-          </table></div>
-        </div>
+  <div class="app-layout">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">🏨</div>
+        <h2>Hotel PLSQL</h2>
+        <span class="role-badge">Empleado</span>
       </div>
-
-      <!-- PAGOS (solo lectura) -->
-      <div id="sec-pagos" class="section">
-        <div class="card">
-          <div class="card-header"><h2>Pagos registrados</h2></div>
-          <div class="table-wrap"><table>
-            <thead><tr><th>ID</th><th>Reserva</th><th>Monto</th><th>Método</th><th>Fecha</th><th>Estado</th></tr></thead>
-            <tbody id="tablaPag"><tr><td colspan="6" class="loading">Cargando...</td></tr></tbody>
-          </table></div>
+      <nav>
+        <div class="nav-item active" onclick="showSection('reservas')"><span class="icon">📅</span><span>Reservas</span>
         </div>
+        <div class="nav-item" onclick="showSection('pagos')"><span class="icon">💳</span><span>Pagos</span></div>
+        <div class="nav-item" onclick="showSection('habitaciones')"><span
+            class="icon">🛏️</span><span>Habitaciones</span></div>
+      </nav>
+      <div class="sidebar-footer">
+        <button class="logout-btn" onclick="logout()">🚪 Cerrar sesión</button>
       </div>
+    </aside>
 
-      <!-- HABITACIONES (puede cambiar estado) -->
-      <div id="sec-habitaciones" class="section">
-        <div class="card">
-          <div class="card-header"><h2>Habitaciones</h2></div>
-          <div class="table-wrap"><table>
-            <thead><tr><th>ID</th><th>Número</th><th>Piso</th><th>Estado</th><th>Cambiar estado</th></tr></thead>
-            <tbody id="tablaHab"><tr><td colspan="5" class="loading">Cargando...</td></tr></tbody>
-          </table></div>
+    <div class="main-content">
+      <div class="topbar">
+        <h1 id="pageTitle">Reservas</h1>
+        <span style="font-size:0.85rem;color:var(--muted)">👔 Empleado</span>
+      </div>
+      <div class="page-content">
+
+        <!-- RESERVAS (solo lectura) -->
+        <div id="sec-reservas" class="section active">
+          <div class="card">
+            <div class="card-header">
+              <h2>Reservas</h2>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Huésped</th>
+                    <th>Habitación</th>
+                    <th>Entrada</th>
+                    <th>Salida</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="tablaRes">
+                  <tr>
+                    <td colspan="7" class="loading">Cargando...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
-      </div>
 
+        <!-- PAGOS (solo lectura) -->
+        <div id="sec-pagos" class="section">
+          <div class="card">
+            <div class="card-header">
+              <h2>Pagos registrados</h2>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Reserva</th>
+                    <th>Monto</th>
+                    <th>Método</th>
+                    <th>Fecha</th>
+                    <th>Estado</th>
+                  </tr>
+                </thead>
+                <tbody id="tablaPag">
+                  <tr>
+                    <td colspan="6" class="loading">Cargando...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- HABITACIONES (puede cambiar estado) -->
+        <div id="sec-habitaciones" class="section">
+          <div class="card">
+            <div class="card-header">
+              <h2>Habitaciones</h2>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Número</th>
+                    <th>Piso</th>
+                    <th>Estado</th>
+                    <th>Cambiar estado</th>
+                  </tr>
+                </thead>
+                <tbody id="tablaHab">
+                  <tr>
+                    <td colspan="5" class="loading">Cargando...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </div>
   </div>
-</div>
 
-<!-- Modal cambio estado habitación -->
-<div class="modal-overlay" id="modalEstado">
-  <div class="modal">
-    <h3>Cambiar Estado de Habitación #<span id="modalHabNum"></span></h3>
-    <input type="hidden" id="modalHabId" />
-    <div class="form-group" style="margin-bottom:20px">
-      <label>Nuevo Estado</label>
-      <select id="nuevoEstado">
-        <option>DISPONIBLE</option>
-        <option>OCUPADA</option>
-        <option>MANTENIMIENTO</option>
-      </select>
-    </div>
-    <div class="modal-actions">
-      <button class="btn btn-outline" onclick="closeModal('modalEstado')">Cancelar</button>
-      <button class="btn btn-primary" onclick="guardarEstado()">Guardar</button>
+  <!-- Modal cambio estado habitación -->
+  <div class="modal-overlay" id="modalEstado">
+    <div class="modal">
+      <h3>Cambiar Estado de Habitación #<span id="modalHabNum"></span></h3>
+      <input type="hidden" id="modalHabId" />
+      <div class="form-group" style="margin-bottom:20px">
+        <label>Nuevo Estado</label>
+        <select id="nuevoEstado">
+          <option>DISPONIBLE</option>
+          <option>OCUPADA</option>
+          <option>MANTENIMIENTO</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-outline" onclick="closeModal('modalEstado')">Cancelar</button>
+        <button class="btn btn-primary" onclick="guardarEstado()">Guardar</button>
+      </div>
     </div>
   </div>
-</div>
 
-<div id="toastContainer" class="toast-container"></div>
-<script src="js/api.js"></script>
-<script>
-  if (sessionStorage.getItem('role') !== 'empleado') window.location.href = 'login.html';
-  function logout() { sessionStorage.clear(); window.location.href = 'login.html'; }
+  <div id="toastContainer" class="toast-container"></div>
+  <script src="js/api.js"></script>
+  <script>
+    if (sessionStorage.getItem('role') !== 'empleado') window.location.href = 'login.html';
+    function logout() { sessionStorage.clear(); window.location.href = 'login.html'; }
 
-  const titles = { reservas: 'Reservas', pagos: 'Pagos', habitaciones: 'Habitaciones' };
-  function showSection(name) {
-    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    document.getElementById(`sec-${name}`).classList.add('active');
-    document.querySelector(`[onclick="showSection('${name}')"]`).classList.add('active');
-    document.getElementById('pageTitle').textContent = titles[name];
-    loaders[name]?.();
-  }
+    const titles = { reservas: 'Reservas', pagos: 'Pagos', habitaciones: 'Habitaciones' };
+    function showSection(name) {
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      document.getElementById(`sec-${name}`).classList.add('active');
+      document.querySelector(`[onclick="showSection('${name}')"]`).classList.add('active');
+      document.getElementById('pageTitle').textContent = titles[name];
+      loaders[name]?.();
+    }
 
-  function openModal(id) { document.getElementById(id).classList.add('open'); }
-  function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+    function openModal(id) { document.getElementById(id).classList.add('open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
-  const loaders = { reservas: loadRes, pagos: loadPag, habitaciones: loadHab };
+    const loaders = { reservas: loadRes, pagos: loadPag, habitaciones: loadHab };
 
-  async function loadRes() {
-    try {
-      const rows = await Reservas.getActivas();
-      document.getElementById('tablaRes').innerHTML = rows.map(r => `
+    async function loadRes() {
+      try {
+        const rows = await Reservas.getAll();
+        document.getElementById('tablaRes').innerHTML = rows.map(r => {
+          const estado = r.ESTADO || r.estado || 'PENDIENTE';
+          let acciones = '';
+
+          if (estado === 'PENDIENTE') {
+            acciones = `
+              <button class="btn btn-sm btn-success" onclick="checkin(${r.ID_RESERVA || r.id_reserva})">✅ Check-in</button>
+              <button class="btn btn-sm btn-outline" onclick="cancelarRes(${r.ID_RESERVA || r.id_reserva})">❌ Cancelar</button>`;
+          } else if (estado === 'ACTIVA') {
+            acciones = `
+              <button class="btn btn-sm btn-primary" onclick="completarRes(${r.ID_RESERVA || r.id_reserva})">🚪 Check-out</button>
+              <button class="btn btn-sm btn-outline" onclick="cancelarRes(${r.ID_RESERVA || r.id_reserva})">❌ Cancelar</button>`;
+          } else {
+            acciones = `<span style="color:gray">Sin acciones</span>`;
+          }
+
+          return `
         <tr>
           <td>#${r.ID_RESERVA || r.id_reserva}</td>
           <td>${r.NOMBRE_HUESPED || r.nombre_huesped || r.ID_HUESPED || '—'}</td>
           <td>${r.NUMERO_HABITACION || r.numero_habitacion || r.ID_HABITACION || '—'}</td>
           <td>${formatDate(r.FECHA_ENTRADA || r.fecha_entrada)}</td>
           <td>${formatDate(r.FECHA_SALIDA || r.fecha_salida)}</td>
-          <td>${badgeEstado(r.ESTADO || r.estado || 'ACTIVA')}</td>
-          <td>
-            <button class="btn btn-sm btn-success" onclick="completarRes(${r.ID_RESERVA || r.id_reserva})">✅ Completar</button>
-          </td>
-        </tr>`).join('') || '<tr><td colspan="7" class="empty-state">Sin reservas activas</td></tr>';
-    } catch(e) { showToast(e.message, 'error'); }
-  }
+          <td>${badgeEstado(estado)}</td>
+          <td>${acciones}</td>
+        </tr>`;
+        }).join('') || '<tr><td colspan="7" class="empty-state">Sin reservas</td></tr>';
+      } catch (e) {
+        showToast(e.message, 'error');
+      }
+    }
 
-  async function completarRes(id) {
-    try { await Reservas.completar(id); showToast('Reserva completada', 'success'); loadRes(); }
-    catch(e) { showToast(e.message, 'error'); }
-  }
+    async function checkin(id) {
+      if (!confirm(`¿Confirmar Check-in para la reserva #${id}?`)) return;
+      try {
+        await Reservas.activar(id);
+        showToast('✅ Check-in realizado. Habitación marcada como OCUPADA.', 'success');
+        loadRes();
+      } catch (e) {
+        showToast(e.message, 'error');
+      }
+    }
 
-  async function loadPag() {
-    try {
-      const rows = await Pagos.getAll();
-      document.getElementById('tablaPag').innerHTML = rows.map(p => `
+    async function cancelarRes(id) {
+      if (!confirm(`¿Cancelar la reserva #${id}?`)) return;
+      try {
+        await Reservas.cancelar(id);
+        showToast('Reserva cancelada.', 'info');
+        loadRes();
+      } catch (e) {
+        showToast(e.message, 'error');
+      }
+    }
+
+    async function completarRes(id) {
+      try {
+        await Reservas.completar(id);
+        showToast('Reserva completada', 'success');
+        loadRes();
+      } catch (e) {
+        showToast(e.message, 'error');
+      }
+    }
+
+    async function loadPag() {
+      try {
+        const rows = await Pagos.getAll();
+        document.getElementById('tablaPag').innerHTML = rows.map(p => `
         <tr>
           <td>#${p.ID_PAGO || p.id_pago}</td>
           <td>#${p.ID_RESERVA || p.id_reserva}</td>
@@ -144,13 +243,13 @@
           <td>${formatDate(p.FECHA_PAGO || p.fecha_pago)}</td>
           <td>${badgeEstado(p.ESTADO || p.estado || 'PAGADO')}</td>
         </tr>`).join('') || '<tr><td colspan="6" class="empty-state">Sin pagos</td></tr>';
-    } catch(e) { showToast(e.message, 'error'); }
-  }
+      } catch (e) { showToast(e.message, 'error'); }
+    }
 
-  async function loadHab() {
-    try {
-      const rows = await Habitaciones.getAll();
-      document.getElementById('tablaHab').innerHTML = rows.map(h => `
+    async function loadHab() {
+      try {
+        const rows = await Habitaciones.getAll();
+        document.getElementById('tablaHab').innerHTML = rows.map(h => `
         <tr>
           <td>${h.ID_HABITACION || h.id_habitacion}</td>
           <td>${h.NUMERO_HABITACION || h.numero_habitacion}</td>
@@ -162,27 +261,28 @@
             </button>
           </td>
         </tr>`).join('') || '<tr><td colspan="5" class="empty-state">Sin habitaciones</td></tr>';
-    } catch(e) { showToast(e.message, 'error'); }
-  }
+      } catch (e) { showToast(e.message, 'error'); }
+    }
 
-  function abrirCambioEstado(id, num, estado) {
-    document.getElementById('modalHabId').value = id;
-    document.getElementById('modalHabNum').textContent = num;
-    document.getElementById('nuevoEstado').value = estado;
-    openModal('modalEstado');
-  }
+    function abrirCambioEstado(id, num, estado) {
+      document.getElementById('modalHabId').value = id;
+      document.getElementById('modalHabNum').textContent = num;
+      document.getElementById('nuevoEstado').value = estado;
+      openModal('modalEstado');
+    }
 
-  async function guardarEstado() {
-    const id = document.getElementById('modalHabId').value;
-    const estado = document.getElementById('nuevoEstado').value;
-    try {
-      await Habitaciones.updateEstado(id, estado);
-      showToast(`Estado actualizado a ${estado}`, 'success');
-      closeModal('modalEstado'); loadHab();
-    } catch(e) { showToast(e.message, 'error'); }
-  }
+    async function guardarEstado() {
+      const id = document.getElementById('modalHabId').value;
+      const estado = document.getElementById('nuevoEstado').value;
+      try {
+        await Habitaciones.updateEstado(id, estado);
+        showToast(`Estado actualizado a ${estado}`, 'success');
+        closeModal('modalEstado'); loadHab();
+      } catch (e) { showToast(e.message, 'error'); }
+    }
 
-  loadRes();
-</script>
+    loadRes();
+  </script>
 </body>
+
 </html>

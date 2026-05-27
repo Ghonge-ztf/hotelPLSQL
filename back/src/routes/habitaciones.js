@@ -5,26 +5,26 @@ import { asyncHandler } from '../utils/asyncHandler.js';
 const router = Router();
 
 // GET /api/habitaciones
-// router.get('/', asyncHandler(async (_req, res) => {
-//   const rows = await execCursor(`BEGIN :cur := pkg_habitacion.listar_disponibles(); END;`);
-//   res.json(rows);
-// }));
+router.get('/', asyncHandler(async (_req, res) => {
+  const rows = await execCursor(`BEGIN :cur := pkg_habitacion.listar_todas(); END;`);
+  res.json(rows);
+}));
 
 // GET /api/habitaciones/disponibles
-router.get('/', asyncHandler(async (_req, res) => {
-  const rows = await execCursor(`BEGIN :cur := pkg_habitacion.listar_disponibles; END;`);
+router.get('/disponibles', asyncHandler(async (_req, res) => {
+  const rows = await execCursor(`BEGIN :cur := pkg_habitacion.listar_disponibles(); END;`);
   res.json(rows);
 }));
 
 // GET /api/habitaciones/:id
-// router.get('/:id', asyncHandler(async (req, res) => {
-//   const rows = await execCursor(
-//     `BEGIN :cur := pkg_habitacion.obtener(:id); END;`,
-//     { id: Number(req.params.id) }
-//   );
-//   if (!rows.length) return res.status(404).json({ error: 'Habitación no encontrada' });
-//   res.json(rows[0]);
-// }));
+router.get('/:id', asyncHandler(async (req, res) => {
+  const rows = await execCursor(
+    `BEGIN :cur := pkg_habitacion.obtener(:id); END;`,
+    { id: Number(req.params.id) }
+  );
+  if (!rows.length) return res.status(404).json({ error: 'Habitación no encontrada' });
+  res.json(rows[0]);
+}));
 
 // POST /api/habitaciones
 router.post('/', asyncHandler(async (req, res) => {

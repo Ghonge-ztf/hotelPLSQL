@@ -263,6 +263,37 @@
       showToast('¡Pago registrado exitosamente!', 'success');
     } catch(e) { showToast(e.message, 'error'); }
   }
+  async function checkIn(idReserva) {
+  const response = await fetch(`/api/reservas/${idReserva}/activar`, {
+    method: 'PATCH'
+  });
+  const data = await response.json();
+  console.log('Check-in:', data.message);
+  // Estado cambia de PENDIENTE → ACTIVA
+}
+
+// 2. REGISTRAR PAGO (y hacer check-out automático)
+async function pagarReserva(idReserva, metodoPago) {
+  const response = await fetch('/api/pagos', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      id_reserva: idReserva,
+      metodo_pago: metodoPago // 'EFECTIVO', 'TARJETA', 'TRANSFERENCIA'
+    })
+  });
+  
+  if (response.ok) {
+    const data = await response.json();
+    console.log('Pago registrado:', data.message);
+    // Estado cambia de ACTIVA → COMPLETADA
+    // Habitación se libera automáticamente
+  } else {
+    const error = await response.json();
+    console.error('Error:', error.error);
+  }
+}
+
 
   // ── INIT ──
   loadHabDisponibles();
